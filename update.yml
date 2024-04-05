@@ -1,0 +1,28 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: installs git & ufw
+    apt:
+      name: 
+        - git
+        - ufw
+      update_cache: yes
+    when: ansible_distribution == "Debian"
+
+  - name: UFW allow [80,443]
+    ufw:
+      rule: allow
+      port: "80,443"
+      proto: tcp
+
+  - name: restarts nginx
+    systemd:
+      name: nginx
+      state: restarted
+    when: ansible_distribution == "Debian"
+
+  - debug:
+      msg: "Current task: {{ansible_play_name}}"
