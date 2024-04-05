@@ -1,0 +1,26 @@
+---
+- name: Clone Git repository and rename directory
+  hosts: all
+  become: yes  
+
+  tasks:
+    - name: Ensure target directory exists
+      file:
+        path: /var/www/libretarian/libre
+        state: directory
+
+    - name: Clone Git repository into specific directory
+      git:
+        repo: https://github.com/azerv1/libre.git
+        dest: /var/www/libretarian/test
+        clone: yes
+
+    - name: Rename the cloned directory to 'libre'
+      command: mv /var/www/libretarian/libre /var/www/libretarian/libre
+      args:
+        creates: /var/www/libretarian/libre
+
+    - name: Restart Nginx service
+      service:
+        name: nginx
+        state: restarted
